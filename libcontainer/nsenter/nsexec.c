@@ -71,6 +71,8 @@ struct nlconfig_t {
 	uint32_t cloneflags;
 	char *oom_score_adj;
 	size_t oom_score_adj_len;
+	char *time_offset;
+	size_t time_offset_len;
 
 	/* User namespace settings. */
 	char *uidmap;
@@ -112,6 +114,7 @@ static int logfd = -1;
 #define ROOTLESS_EUID_ATTR	27287
 #define UIDMAPPATH_ATTR	    27288
 #define GIDMAPPATH_ATTR	    27289
+#define TIME_OFFSET_ATTR	    27290
 
 /*
  * Use the raw syscall for versions of glibc which don't include a function for
@@ -327,6 +330,15 @@ static void update_oom_score_adj(char *data, size_t len)
 		bail("failed to update /proc/self/oom_score_adj");
 }
 
+static void update_time_offset(char *data, size_t len)
+{
+	if (data == NULL || len <= 0)
+		return;
+
+	if (write_file(data, len, "/proc/self/timens_offsets") < 0)
+		bail("failed to update /proc/self/timens_offsets");
+}
+
 /* A dummy function that just jumps to the given jumpval. */
 static int child_func(void *arg) __attribute__ ((noinline));
 static int child_func(void *arg)
@@ -401,6 +413,8 @@ static int nsflag(char *name)
 		return CLONE_NEWUSER;
 	else if (!strcmp(name, "uts"))
 		return CLONE_NEWUTS;
+	else if (!strcmp(name, "time"))
+		return CLONE_NEWTIME;
 
 	/* If we don't recognise a name, fallback to 0. */
 	return 0;
@@ -463,6 +477,10 @@ static void nl_parse(int fd, struct nlconfig_t *config)
 		case OOM_SCORE_ADJ_ATTR:
 			config->oom_score_adj = current;
 			config->oom_score_adj_len = payload_len;
+			break;
+		case TIME_OFFSET_ATTR:
+			config->time_offset = current;
+			config->time_offset_len = payload_len;
 			break;
 		case NS_PATHS_ATTR:
 			config->namespaces = current;
@@ -911,6 +929,9 @@ void nsexec(void)
 			 */
 			if (unshare(config.cloneflags & ~CLONE_NEWCGROUP) < 0)
 				bail("failed to unshare namespaces");
+
+			// TODO: Time offset settings description -> why here
+			update_time_offset(config.time_offset, config.time_offset_len);
 
 			/*
 			 * TODO: What about non-namespace clone flags that we're dropping here?

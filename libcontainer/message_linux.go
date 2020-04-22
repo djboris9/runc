@@ -20,6 +20,7 @@ const (
 	RootlessEUIDAttr uint16 = 27287
 	UidmapPathAttr   uint16 = 27288
 	GidmapPathAttr   uint16 = 27289
+	TimeOffsetAttr   uint16 = 27290
 )
 
 type Int32msg struct {

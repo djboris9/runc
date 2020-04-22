@@ -56,6 +56,8 @@ type Process struct {
 	ApparmorProfile string `json:"apparmorProfile,omitempty" platform:"linux"`
 	// Specify an oom_score_adj for the container.
 	OOMScoreAdj *int `json:"oomScoreAdj,omitempty" platform:"linux"`
+	// Specify an timens_offset for the container.
+	TimeOffset *int `json:"timeOffset,omitempty" platform:"linux"`
 	// SelinuxLabel specifies the selinux context that the container process is run as.
 	SelinuxLabel string `json:"selinuxLabel,omitempty" platform:"linux"`
 }
@@ -211,6 +213,8 @@ const (
 	UserNamespace LinuxNamespaceType = "user"
 	// CgroupNamespace for isolating cgroup hierarchies
 	CgroupNamespace LinuxNamespaceType = "cgroup"
+	// TimeNamespace for isolating time domain
+	TimeNamespace LinuxNamespaceType = "time"
 )
 
 // LinuxIDMapping specifies UID/GID mappings

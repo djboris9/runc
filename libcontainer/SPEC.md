@@ -30,6 +30,7 @@ Minimum requirements:
 | CLONE_NEWNS     |    1    |
 | CLONE_NEWUSER   |    1    |
 | CLONE_NEWCGROUP |    1    |
+| CLONE_NEWTIME   |    1    |
 
 Namespaces are created for the container via the `unshare` syscall.
 

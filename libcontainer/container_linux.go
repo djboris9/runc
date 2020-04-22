@@ -2057,6 +2057,15 @@ func (c *linuxContainer) bootstrapData(cloneFlags uintptr, nsMaps map[configs.Na
 		})
 	}
 
+	if c.config.TimeOffset != nil {
+		// write timens_offsets
+		r.AddData(&Bytemsg{
+			Type: TimeOffsetAttr,
+			Value: []byte(fmt.Sprintf("monotonic %d 0\nboottime %d 0",
+				*c.config.TimeOffset, *c.config.TimeOffset)),
+		})
+	}
+
 	// write rootless
 	r.AddData(&Boolmsg{
 		Type:  RootlessEUIDAttr,

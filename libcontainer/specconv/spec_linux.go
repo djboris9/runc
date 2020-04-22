@@ -34,6 +34,7 @@ var namespaceMapping = map[specs.LinuxNamespaceType]configs.NamespaceType{
 	specs.IPCNamespace:     configs.NEWIPC,
 	specs.UTSNamespace:     configs.NEWUTS,
 	specs.CgroupNamespace:  configs.NEWCGROUP,
+	specs.TimeNamespace:    configs.NEWTIME,
 }
 
 var mountPropagationMapping = map[string]int{
@@ -260,6 +261,7 @@ func CreateLibcontainerConfig(opts *CreateOpts) (*configs.Config, error) {
 	}
 	if spec.Process != nil {
 		config.OomScoreAdj = spec.Process.OOMScoreAdj
+		config.TimeOffset = spec.Process.TimeOffset
 		if spec.Process.SelinuxLabel != "" {
 			config.ProcessLabel = spec.Process.SelinuxLabel
 		}

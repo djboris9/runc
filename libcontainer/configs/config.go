@@ -114,6 +114,9 @@ type Config struct {
 	// If a namespace is not provided that namespace is shared from the container's parent process
 	Namespaces Namespaces `json:"namespaces"`
 
+	// TimeOffset specifies the containers time offset in seconds
+	TimeOffset *int `json:"time_offset"`
+
 	// Capabilities specify the capabilities to keep when executing the process inside the container
 	// All capabilities not specified will be dropped from the processes capability mask
 	Capabilities *Capabilities `json:"capabilities"`
